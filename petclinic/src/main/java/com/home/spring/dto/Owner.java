@@ -1,6 +1,7 @@
 package com.home.spring.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.home.spring.security.dto.DomainUser;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,6 +13,10 @@ public class Owner {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
+    @JsonIgnore
+    private DomainUser domainUser;
+
     private String firstName;
     private String lastName;
 
@@ -22,13 +27,23 @@ public class Owner {
     public Owner() {
     }
 
-    public Owner(String firstName, String lastName) {
+    public Owner(String firstName, String lastName, DomainUser domainUser) {
+        this.domainUser = domainUser;
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
+
     public Long getId() {
         return id;
+    }
+
+    public DomainUser getDomainUser() {
+        return domainUser;
+    }
+
+    public void setDomainUser(DomainUser domainUser) {
+        this.domainUser = domainUser;
     }
 
     public String getFirstName() {

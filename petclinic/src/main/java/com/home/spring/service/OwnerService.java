@@ -18,12 +18,16 @@ public class OwnerService {
     @Autowired
     private PetRepository petRepository;
 
-    public List<Pet> getPetsForOwner(Long ownerId) {
-        Owner owner = ownerRepository.findOne(ownerId);
+    public List<Pet> getPetsForOwner(String username) {
+        Owner owner = ownerRepository.findByDomainUserUsername(username);
         return petRepository.findByOwner(owner);
     }
 
     public Pet getPet(Long petId) {
         return petRepository.findOne(petId);
+    }
+
+    public List<Pet> getPets() {
+        return petRepository.findAll();
     }
 }

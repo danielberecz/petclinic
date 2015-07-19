@@ -8,6 +8,9 @@ import com.home.spring.dto.Disease;
 import com.home.spring.dto.Owner;
 import com.home.spring.dto.Pet;
 import com.home.spring.dto.Vet;
+import com.home.spring.security.dao.DomainUserRepository;
+import com.home.spring.security.dto.DomainUser;
+import com.home.spring.security.dto.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -33,6 +36,9 @@ public class Application implements CommandLineRunner {
     @Autowired
     private VetRepository vetRepository;
 
+    @Autowired
+    private DomainUserRepository domainUserRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -44,11 +50,16 @@ public class Application implements CommandLineRunner {
         Disease arthiris = new Disease("Arthiris", "Acupuncture");
         Disease rabies = new Disease("Rabies", "Vaccination");
 
-        Vet vetA = new Vet("Vet", "A");
-        Vet vetB = new Vet("Vet", "B");
+        DomainUser domainUserOwnerA = new DomainUser("ownera", "pass", Role.ROLE_OWNER);
+        DomainUser domainUserOwnerB = new DomainUser("ownerb", "pass", Role.ROLE_OWNER);
+        DomainUser domainUserVetA = new DomainUser("veta", "vet", Role.ROLE_VET);
+        DomainUser domainUserVetB = new DomainUser("vetb", "vet", Role.ROLE_VET);
 
-        Owner ownerA = new Owner("Owner", "A");
-        Owner ownerB = new Owner("Owner", "B");
+        Vet vetA = new Vet("Vet", "A", domainUserVetA);
+        Vet vetB = new Vet("Vet", "B", domainUserVetB);
+
+        Owner ownerA = new Owner("OwnerA", "Owner", domainUserOwnerA);
+        Owner ownerB = new Owner("OwnerB", "Owner", domainUserOwnerB);
 
         Pet cat = new Pet("Cat", ownerA, vetB, Collections.singletonList(rabies), new Date());
         Pet dog = new Pet("Dog", ownerA, vetA, Collections.singletonList(parvoVirus), new Date());
@@ -64,5 +75,6 @@ public class Application implements CommandLineRunner {
         petRepository.save(Arrays.asList(cat, dog, hamster));
         ownerRepository.save(Arrays.asList(ownerA, ownerB));
         vetRepository.save(Arrays.asList(vetA, vetB));
+        domainUserRepository.save(Arrays.asList(domainUserOwnerA, domainUserOwnerB, domainUserVetA, domainUserVetB));
     }
 }

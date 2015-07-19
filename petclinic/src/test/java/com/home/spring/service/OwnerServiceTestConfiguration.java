@@ -8,6 +8,8 @@ import com.home.spring.dto.Disease;
 import com.home.spring.dto.Owner;
 import com.home.spring.dto.Pet;
 import com.home.spring.dto.Vet;
+import com.home.spring.security.dao.DomainUserRepository;
+import com.home.spring.security.dto.DomainUser;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.orm.jpa.EntityScan;
@@ -17,10 +19,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = {OwnerRepository.class, PetRepository.class, VetRepository.class, DiseaseRepository.class})
-@EntityScan(basePackageClasses = {Disease.class, Owner.class, Pet.class, Vet.class})
+@EnableJpaRepositories(basePackageClasses = {OwnerRepository.class, PetRepository.class, VetRepository.class, DiseaseRepository.class, DomainUserRepository.class})
+@EntityScan(basePackageClasses = {Disease.class, Owner.class, Pet.class, Vet.class, DomainUser.class})
 @Import({DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class TestConfiguration {
+public class OwnerServiceTestConfiguration {
 
     @Bean
     public OwnerService getOwnerService() {
