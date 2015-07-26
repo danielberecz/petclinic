@@ -82,7 +82,6 @@ public class OwnerServiceTest {
         domainUserRepository.save(Arrays.asList(domainUserOwnerA, domainUserOwnerB, domainUserVetA, domainUserVetB));
     }
 
-
     @After
     public void tearDown() throws Exception {
         petRepository.deleteAll();
@@ -103,5 +102,22 @@ public class OwnerServiceTest {
         Optional<Pet> cat = pets.stream().filter(p -> p.getName().equals("Cat")).findFirst();
         Pet pet = ownerService.getPet(cat.get().getId());
         Assert.assertEquals("Cat", pet.getName());
+    }
+
+    @Test
+    public void testGetPets() throws Exception {
+        List<Pet> pets = ownerService.getPets();
+        Assert.assertTrue(pets.size() == 3);
+        Assert.assertTrue(pets.stream().allMatch(p -> p.getName().equals("Cat") ||
+                p.getName().equals("Dog") ||
+                p.getName().equals("Hamster")));
+    }
+
+    @Test
+    public void testSaveDisease() throws Exception {
+        Disease disease = new Disease("disease", "treatment");
+        ownerService.saveDisease(disease);
+        Assert.assertTrue(diseaseRepository.findAll().stream().anyMatch(d -> d.getName().equals(disease.getName()) &&
+                d.getTreatment().equals(disease.getTreatment())));
     }
 }

@@ -1,7 +1,9 @@
 package com.home.spring.service;
 
+import com.home.spring.dao.DiseaseRepository;
 import com.home.spring.dao.OwnerRepository;
 import com.home.spring.dao.PetRepository;
+import com.home.spring.dto.Disease;
 import com.home.spring.dto.Owner;
 import com.home.spring.dto.Pet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class OwnerService {
     @Autowired
     private PetRepository petRepository;
 
+    @Autowired
+    private DiseaseRepository diseaseRepository;
+
     public List<Pet> getPetsForOwner(String username) {
         Owner owner = ownerRepository.findByDomainUserUsername(username);
         return petRepository.findByOwner(owner);
@@ -29,5 +34,9 @@ public class OwnerService {
 
     public List<Pet> getPets() {
         return petRepository.findAll();
+    }
+
+    public void saveDisease(Disease disease) {
+        diseaseRepository.save(disease);
     }
 }
