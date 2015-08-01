@@ -22,10 +22,20 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackageClasses = {OwnerRepository.class, PetRepository.class, VetRepository.class, DiseaseRepository.class, DomainUserRepository.class})
 @EntityScan(basePackageClasses = {Disease.class, Owner.class, Pet.class, Vet.class, DomainUser.class})
 @Import({DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class OwnerServiceTestConfiguration {
+public class ServiceTestConfiguration {
 
     @Bean
     public OwnerService getOwnerService() {
         return new OwnerService();
+    }
+
+    @Bean
+    public PetService getPetService() {
+        return new PetService();
+    }
+
+    @Bean
+    public DiseaseService getDiseaseService() {
+        return new DiseaseService();
     }
 }

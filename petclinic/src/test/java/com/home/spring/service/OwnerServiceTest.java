@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @RunWith(value = SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OwnerServiceTestConfiguration.class)
+@SpringApplicationConfiguration(classes = ServiceTestConfiguration.class)
 @Transactional
 public class OwnerServiceTest {
 
@@ -95,29 +95,5 @@ public class OwnerServiceTest {
     public void testGetPetsForOwner() throws Exception {
         List<Pet> petsForOwner = ownerService.getPetsForOwner("OwnerA");
         Assert.assertTrue(petsForOwner.stream().allMatch(p -> p.getName().equals("Cat") || p.getName().equals("Dog")));
-    }
-
-    @Test
-    public void testGetPet() throws Exception {
-        Optional<Pet> cat = pets.stream().filter(p -> p.getName().equals("Cat")).findFirst();
-        Pet pet = ownerService.getPet(cat.get().getId());
-        Assert.assertEquals("Cat", pet.getName());
-    }
-
-    @Test
-    public void testGetPets() throws Exception {
-        List<Pet> pets = ownerService.getPets();
-        Assert.assertTrue(pets.size() == 3);
-        Assert.assertTrue(pets.stream().allMatch(p -> p.getName().equals("Cat") ||
-                p.getName().equals("Dog") ||
-                p.getName().equals("Hamster")));
-    }
-
-    @Test
-    public void testSaveDisease() throws Exception {
-        Disease disease = new Disease("disease", "treatment");
-        ownerService.saveDisease(disease);
-        Assert.assertTrue(diseaseRepository.findAll().stream().anyMatch(d -> d.getName().equals(disease.getName()) &&
-                d.getTreatment().equals(disease.getTreatment())));
     }
 }

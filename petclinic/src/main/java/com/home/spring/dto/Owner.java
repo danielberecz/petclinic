@@ -13,7 +13,7 @@ public class Owner {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false, orphanRemoval = true)
     @JsonIgnore
     private DomainUser domainUser;
 

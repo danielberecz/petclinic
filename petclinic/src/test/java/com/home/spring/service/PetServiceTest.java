@@ -1,4 +1,4 @@
-package com.home.spring;
+package com.home.spring.service;
 
 import com.home.spring.dao.DiseaseRepository;
 import com.home.spring.dao.OwnerRepository;
@@ -11,29 +11,34 @@ import com.home.spring.dto.Vet;
 import com.home.spring.security.dao.DomainUserRepository;
 import com.home.spring.security.dto.DomainUser;
 import com.home.spring.security.dto.Role;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
-@SpringBootApplication
-@EnableCircuitBreaker
-public class Application implements CommandLineRunner {
+@RunWith(value = SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = ServiceTestConfiguration.class)
+@Transactional
+public class PetServiceTest {
+
+    @Autowired
+    private PetService petService;
 
     @Autowired
     private DiseaseRepository diseaseRepository;
 
     @Autowired
-    private OwnerRepository ownerRepository;
+    private PetRepository petRepository;
 
     @Autowired
-    private PetRepository petRepository;
+    private OwnerRepository ownerRepository;
 
     @Autowired
     private VetRepository vetRepository;
@@ -41,13 +46,10 @@ public class Application implements CommandLineRunner {
     @Autowired
     private DomainUserRepository domainUserRepository;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+    private List<Pet> pets;
 
-    @Override
-    @Transactional
-    public void run(String... strings) throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Disease parvoVirus = new Disease("Parvo Virus", "CPV-2b");
         Disease arthiris = new Disease("Arthiris", "Acupuncture");
         Disease rabies = new Disease("Rabies", "Vaccination");
@@ -74,9 +76,34 @@ public class Application implements CommandLineRunner {
         ownerB.setPets(Collections.singletonList(hamster));
 
         diseaseRepository.save(Arrays.asList(parvoVirus, arthiris, rabies));
-        petRepository.save(Arrays.asList(cat, dog, hamster));
+        pets = petRepository.save(Arrays.asList(cat, dog, hamster));
         ownerRepository.save(Arrays.asList(ownerA, ownerB));
         vetRepository.save(Arrays.asList(vetA, vetB));
         domainUserRepository.save(Arrays.asList(domainUserOwnerA, domainUserOwnerB, domainUserVetA, domainUserVetB));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        petRepository.deleteAll();
+        ownerRepository.deleteAll();
+        vetRepository.deleteAll();
+        diseaseRepository.deleteAll();
+        domainUserRepository.deleteAll();
+    }
+
+    @Test
+    public void testGetPet() throws Exception {
+        Optional<Pet> cat = pets.stream().filter(p -> p.getName().equals("Cat")).findFirst();
+        Pet pet = petService.getPet(cat.get().getId());
+        Assert.assertEquals("Cat", pet.getName());
+    }
+
+    @Test
+    public void testGetPets() throws Exception {
+        List<Pet> pets = petService.getPets();
+        Assert.assertTrue(pets.size() == 3);
+        Assert.assertTrue(pets.stream().allMatch(p -> p.getName().equals("Cat") ||
+                p.getName().equals("Dog") ||
+                p.getName().equals("Hamster")));
     }
 }

@@ -22,7 +22,7 @@ public class Pet {
     @JoinColumn(name = "vet_id")
     private Vet vet;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "pets_diseases", joinColumns = @JoinColumn(name = "disease_id"), inverseJoinColumns = @JoinColumn(name = "pet_id"))
     private List<Disease> diseases;
 

@@ -1,14 +1,15 @@
 package com.home.spring.service;
 
-import com.home.spring.dao.DiseaseRepository;
 import com.home.spring.dao.OwnerRepository;
 import com.home.spring.dao.PetRepository;
-import com.home.spring.dto.Disease;
 import com.home.spring.dto.Owner;
 import com.home.spring.dto.Pet;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,23 +21,15 @@ public class OwnerService {
     @Autowired
     private PetRepository petRepository;
 
-    @Autowired
-    private DiseaseRepository diseaseRepository;
-
+    @HystrixCommand(fallbackMethod = "fallbackPetsForOwner",
+        commandProperties = {@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")}
+    )
     public List<Pet> getPetsForOwner(String username) {
         Owner owner = ownerRepository.findByDomainUserUsername(username);
         return petRepository.findByOwner(owner);
     }
 
-    public Pet getPet(Long petId) {
-        return petRepository.findOne(petId);
-    }
-
-    public List<Pet> getPets() {
-        return petRepository.findAll();
-    }
-
-    public void saveDisease(Disease disease) {
-        diseaseRepository.save(disease);
+    public List<Pet> fallbackPetsForOwner(String username) {
+        return new ArrayList<>();
     }
 }
